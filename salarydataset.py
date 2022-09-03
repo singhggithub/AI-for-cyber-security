@@ -40,9 +40,11 @@ def plot_regression_line(x, y, b):
 
 def main():
 	# observations / data
-	# data =  pd.read_csv ("Salary_Data.csv")
-	x = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-	y = np.array([1, 3, 2, 5, 7, 8, 8, 9, 10, 12])
+	dataset = pd.read_csv("Salary_Data.csv")
+	data = dataset.iloc[:,0:1].values
+	x = data
+	DATA = data = dataset.iloc[:,1:2].values
+	y = DATA
 
 	# estimating coefficients
 	b = estimate_coef(x, y)
