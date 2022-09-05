@@ -1,35 +1,52 @@
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
-import seaborn as sns
-import warnings
-warnings.filterwarnings("ignore")
-#import dataset
-startup_df=pd.read_csv(r'50_Startups.csv')
-startup_df
-shape=startup_df.shape
-print("Dataset contains {} rows and {} columns".format(shape[0],shape[1]))
-startup_df.columns
-#Statistical Details of the dataset
-startup_df.describe()
-x=startup_df.iloc[:,:4]
-y=startup_df.iloc[:,4]
-from sklearn.preprocessing import OneHotEncoder
-ohe=OneHotEncoder(sparse=False)
-x=ohe.fit_transform(startup_df[['State']])
-x
-ohe.categories_
-from sklearn.compose import make_column_transformer
-col_trans=make_column_transformer(
-    (OneHotEncoder(handle_unknown='ignore'),['State']),
-    remainder='passthrough')
-x=col_trans.fit_transform(x)
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
-#shapes of splitted data
-print("X_train:",x_train.shape)
-print("X_test:",x_test.shape)
-print("Y_train:",y_train.shape)
-print("Y_test:",y_test.shape)
+import numpy as np
+from sklearn import datasets, linear_model, metrics
+
+# load the boston dataset
+boston = datasets.load_boston(return_X_y=False)
+
+# defining feature matrix(X) and response vector(y)
+X = boston.data
+y = boston.target
+
+# splitting X and y into training and testing sets
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4,
+													random_state=1)
+
+# create linear regression object
+reg = linear_model.LinearRegression()
+
+# train the model using the training sets
+reg.fit(X_train, y_train)
+
+# regression coefficients
+print('Coefficients: ', reg.coef_)
+
+# variance score: 1 means perfect prediction
+print('Variance score: {}'.format(reg.score(X_test, y_test)))
+
+# plot for residual error
+
+## setting plot style
+plt.style.use('fivethirtyeight')
+
+## plotting residual errors in training data
+plt.scatter(reg.predict(X_train), reg.predict(X_train) - y_train,
+			color = "green", s = 10, label = 'Train data')
+
+## plotting residual errors in test data
+plt.scatter(reg.predict(X_test), reg.predict(X_test) - y_test,
+			color = "blue", s = 10, label = 'Test data')
+
+## plotting line for zero residual error
+plt.hlines(y = 0, xmin = 0, xmax = 50, linewidth = 2)
+
+## plotting legend
+plt.legend(loc = 'upper right')
+
+## plot title
+plt.title("Residual errors")
+
+## method call for showing the plot
+plt.show()
